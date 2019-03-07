@@ -2,11 +2,13 @@
 import path from 'path';
 import assert from 'assert';
 import { transform } from 'babel-core';
+import babelPluginSyntaxDynamicImport from 'babel-plugin-syntax-dynamic-import';
 import plugin from '../src';
 
 describe('Babel plugin module alias', () => {
     const transformerOpts = {
         plugins: [
+            babelPluginSyntaxDynamicImport,
             [plugin, {
                 replaceFunc: './test/replace/replaceFunc.js',
                 replaceHandlerName: 'replaceImport',
@@ -38,6 +40,13 @@ describe('Babel plugin module alias', () => {
 
                     assert.strictEqual(result.code, 'export { utils } from "$ls";');
                 });
+
+                it('with a dynamic import expression', () => {
+                    const code = 'var utils = import("utils");';
+                    const result = transform(code, transformerOpts);
+
+                    assert.strictEqual(result.code, 'var utils = import("$ls");');
+                })
             });
         });
     });

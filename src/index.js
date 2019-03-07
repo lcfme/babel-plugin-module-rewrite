@@ -36,6 +36,7 @@ export default ({ types: t }, a, b) => {
     function transformRequireCall(nodePath, state) {
         if (
             !t.isIdentifier(nodePath.node.callee, { name: 'require' }) &&
+            !t.isImport(nodePath.node.callee) &&
                 !(
                     t.isMemberExpression(nodePath.node.callee) &&
                     t.isIdentifier(nodePath.node.callee.object, { name: 'require' })
